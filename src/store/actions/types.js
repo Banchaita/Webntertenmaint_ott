@@ -1,0 +1,4 @@
+export const LOGOUT = "LOGOUT"
+export const VALIDATE_OTP_RESPONSE = "VALIDATE_OTP_RESPONSE"
+export const EMAIL_SEND = "EMAIL_SEND"
+
