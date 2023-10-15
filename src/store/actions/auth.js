@@ -1,7 +1,7 @@
 import { apiCall } from "@/api";
 const { EMAIL_SEND,VALIDATE_OTP_RESPONSE } = require("./types");
 
-const base_url = "http://webntertenmaint.com/"
+const base_url = "https://webntertenmaint.com/"
 // const base_url = "https://example.com/"
 
 
