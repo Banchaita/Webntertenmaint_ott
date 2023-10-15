@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import requests from "@/utils/requests";
 import Hero from "@/components/Hero";
 import Row from "@/components/Row";
+import Footer from "@/components/Footer";
+
 
 export default function LifeStyle({
   moviePosters,
@@ -41,6 +43,7 @@ export default function LifeStyle({
           <Row title="Romance Movies" movies={romanceMovies} />
           <Row title="Documentaries" movies={documentaries} />
         </section>
+        <Footer/>
       </main>
     </>
   );
