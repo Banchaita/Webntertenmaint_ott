@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ["image.tmdb.org"],
   },
+  // useFileSystemPublicRoutes: false,
 };
 
 module.exports = nextConfig;

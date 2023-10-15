@@ -34,7 +34,7 @@
   }
   
     .headerLink{
-      @apply cursor-pointer text-sm font-semibold text-[#2d2a2a] transition duration-[.4s] hover:text-[#595555]
+      @apply cursor-pointer text-sm font-semibold text-[#ffff] transition duration-[.4s] hover:text-[#595555]
     }
   
     .bannerButton {

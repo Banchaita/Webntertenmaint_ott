@@ -1,12 +1,13 @@
+import React, { useState, useEffect } from 'react';
 import Link from "next/link";
-import React from "react";
 import { useRouter } from "next/router";
 import { BsBellFill } from "react-icons/bs";
-import { BiLogInCircle } from "react-icons/bi";
-import {useSession } from "next-auth/react";
+import { BiLogInCircle,BiMenu } from "react-icons/bi";
+import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Login from "./Login";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -17,44 +18,83 @@ const Navbar = () => {
   const isLifeStylePage = router.pathname === "/LifeStyle"; // Check if the current page is the index page
   const isSoundPage = router.pathname === "/SoundTrack"; // Check if the current page is the index page
   const isMusiconPage = router.pathname === "/Musicon"; // Check if the current page is the index page
-  
-  const { data: session } = useSession();
+  const [isMobileNavOpen, toggleMobileNav] = useState(false);
+
+  // const { data: session } = useSession();
+  // if (!session) return <Login />
+
   const handleLogout = async () => {
-    await signOut({ redirect: false });
+    toast("Logout successfully!")
+    // await signOut({ redirect: false });
     router.push("/");
-};
-// if (!session) return <Login />
+  };
+
 
   return (
-    <nav>
-      <div className="container flex justify-between">
-        <div className="flex items-center space-x-2 md:space-x-10">
-          {/* Logo and Home link */}
-          <Link href="/">
-            <img src="/weber_logo-removebg.png" alt="" className="logo h-auto w-[100px]" />
-          </Link>
-          {!isStoryTellerPage || isIndexPage  &&  ( // Hide this UL on the index page
-            <ul className="hidden space-x-4 md:flex">
-              <Link href="/">
+    <>
+      <ToastContainer />
+      <nav>
+        <div className="container flex justify-between">
+          <div className="flex items-center space-x-2 md:space-x-10">
+            {/* Logo and Home link */}
+            <Link href="/">
+              <img src="/weber_logo-removebg.png" alt="" className="logo h-auto w-[100px]" />
+            </Link>
+            <div className="lg:hidden">
+              <button onClick={() => toggleMobileNav(!isMobileNavOpen)}>
+                <BiMenu className="h-6 w-6" />
+              </button>
+            </div>
+            {isMobileNavOpen && (
+              <ul className="lg:hidden flex flex-col space-y-2">
                 <li className="headerLink cursor-pointer font-semibold text-white hover:text-white">
                   Home
                 </li>
-              </Link>
-              <Link href="/StoryTeller">
-                <li className="headerLink">Story Teller</li>
-              </Link>
-              <Link href="/musicon">
-                <li className="headerLink">Musicon</li>
-              </Link>
-              <Link href="/LifeStyle">
-                <li className="headerLink">Life Style</li>
-              </Link>
-              <Link href="/SoundTrack">
-                <li className="headerLink">Sound Track</li>
-              </Link>
-            </ul>
-          )}
-          <ul className="hidden space-x-4 md:flex">
+                <li className="headerLink">Best Movies</li>
+                <li className="headerLink">New & Popular</li>
+                <li className="headerLink">TV Shows</li>
+                <li className="headerLink">My List</li>
+              </ul>
+            )}
+
+            {/* {isMobileNavOpen && isLifeStylePage && (
+              <ul className="hidden md:flex space-x-4">
+                <li className="headerLink cursor-pointer font-semibold text-white hover:text-black">
+                  <Link href="/LifeStyle">Home</Link>
+                </li>
+                <li className="headerLink">New & Popular</li>
+                <li className="headerLink">Best Life Style</li>
+                <li className="headerLink">My List</li>
+              </ul>
+            )} */}
+
+
+
+
+
+
+            {!isStoryTellerPage || isIndexPage && ( // Hide this UL on the index page
+              <ul className="hidden space-x-4 md:flex">
+                <Link href="/">
+                  <li className="headerLink cursor-pointer font-semibold text-white hover:text-white">
+                    Home
+                  </li>
+                </Link>
+                <Link href="/StoryTeller">
+                  <li className="headerLink">Story Teller</li>
+                </Link>
+                <Link href="/musicon">
+                  <li className="headerLink">Musicon</li>
+                </Link>
+                <Link href="/LifeStyle">
+                  <li className="headerLink">Life Style</li>
+                </Link>
+                <Link href="/SoundTrack">
+                  <li className="headerLink">Sound Track</li>
+                </Link>
+              </ul>
+            )}
+            <ul className="hidden space-x-4 md:flex">
               {isStoryTellerPage && (
                 <>
                   <Link href="/StoryTeller">
@@ -64,11 +104,11 @@ const Navbar = () => {
                   <li className="headerLink">New & Popular</li>
                   <li className="headerLink">TV Shows</li>
                   <li className="headerLink">My List</li>
-                </> 
+                </>
               )}
-          </ul>
+            </ul>
 
-          <ul className="hidden space-x-4 md:flex">
+            <ul className="hidden space-x-4 md:flex">
               {isLifeStylePage && (
                 <>
                   <Link href="/LifeStyle">
@@ -77,11 +117,11 @@ const Navbar = () => {
                   <li className="headerLink">New & Popular</li>
                   <li className="headerLink">Best Life Style</li>
                   <li className="headerLink">My List</li>
-                </> 
+                </>
               )}
-          </ul>
+            </ul>
 
-          <ul className="hidden space-x-4 md:flex">
+            <ul className="hidden space-x-4 md:flex">
               {isSoundPage && (
                 <>
                   <Link href="/SoundTrack">
@@ -91,10 +131,10 @@ const Navbar = () => {
                   <li className="headerLink">New & Popular</li>
                   <li className="headerLink">Best Sound Track</li>
                   <li className="headerLink">My List</li>
-                </> 
+                </>
               )}
-          </ul>
-          <ul className="hidden space-x-4 md:flex">
+            </ul>
+            <ul className="hidden space-x-4 md:flex">
               {isMusiconPage && (
                 <>
                   <Link href="/Musicon">
@@ -104,29 +144,31 @@ const Navbar = () => {
                   <li className="headerLink">New & Popular</li>
                   <li className="headerLink">Best Musicon</li>
                   <li className="headerLink">My List</li>
-                </> 
+                </>
               )}
-          </ul>
-        </div>
+            </ul>
+          </div>
 
-        <div className="flex items-center space-x-4 text-sm font-light">
-           {/* Show this only on other pages */}
-          <BsBellFill className="h-6 w-6" />
-          {isIndexPage && ( // Show this only on the index page
-            <BiLogInCircle
-              className="h-6 w-6 cursor-pointer rounded"
-              onClick={() => signOut()}
-            />
-          )}
-          {!isIndexPage && (
-            <BiLogInCircle
-              className="h-6 w-6 cursor-pointer rounded"
-              onClick={() => handleLogout()}
-            />
-          )}
+          <div className="flex items-center space-x-4 text-sm font-light">
+            {/* Show this only on other pages */}
+            <BsBellFill className="h-6 w-6" />
+            {isIndexPage && ( // Show this only on the index page
+              <BiLogInCircle
+                className="h-6 w-6 cursor-pointer rounded"
+                onClick={() => signOut()}
+              />
+            )}
+            {!isIndexPage && (
+              <BiLogInCircle
+                className="h-6 w-6 cursor-pointer rounded"
+                onClick={() => handleLogout()}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
+
   );
 };
 

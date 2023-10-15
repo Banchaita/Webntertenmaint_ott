@@ -12,6 +12,8 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { CgSpinner } from "react-icons/cg";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const router = useRouter();
@@ -30,7 +32,6 @@ const Login = () => {
           {
             size: "invisible",
             callback: (response) => {
-              console.log("response@@@",response)
               onSignup();
             },
             "expired-callback": () => { },
@@ -54,8 +55,8 @@ const Login = () => {
 
     signInWithPhoneNumber(auth, formatPh, appVerifier)
       .then((confirmationResult) => {
-        console.log("confirmationResult---->>>",confirmationResult)
         window.confirmationResult = confirmationResult;
+        toast("OTP send your phone number")
         setLoading(false);
       })
       .catch((error) => {
@@ -66,12 +67,11 @@ const Login = () => {
 
 
   function onOTPVerify() {
-    // router.push("/Home")   
+   
     window.confirmationResult
       .confirm(otp)
       .then(async (res) => {
-        console.log("Login successfully!")
-        // toast.success("Login successfully!");
+        toast("Login successfully!")
         router.push("/Home"); // Replace "/signup" with the actual path to your signup page
       })
       .catch((err) => {
@@ -91,6 +91,7 @@ const Login = () => {
       </Head>
 
       <div className="login_bg_gradient bg-cover h-screen grid place-items-center">
+      <ToastContainer />
       {/* <Logo style="w-52 absolute top-0 left-0 m-8" /> */}
       <img src="/weber_logo-removebg.png" alt="" className="logo w-20 absolute top-0 left-0 m-8" />
 
@@ -148,7 +149,7 @@ const Login = () => {
           <button
             type="button"
             onClick={onOTPVerify}
-            className="text-white-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
+            className="text-white-700 hover:text-white border border-red-700 hover:bg-red-800 focus:outline-none  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
           >
             Login
           </button>

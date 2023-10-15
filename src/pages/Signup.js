@@ -4,12 +4,12 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import FacebookLoginButton from "@/components/FacebookBtn";
 import GoogleBtn from "@/components/GoogleBtn";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { emailSendWithOtp,validateOtp } from "@/store/actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 import { CgSpinner } from "react-icons/cg";
-// import toast from "@/components/toast";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -20,13 +20,11 @@ const Signup = () => {
     const [ph, setPh] = useState("");
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
-    const [loading, setLoading] = useState(false);
 
 
     const email_response = useSelector((state) => state.auth.email_response)
     const showRes = useSelector((state) => state.auth.otp_response)
 
-    console.log("email_response--->>>>>>>>",showRes)
 
 
     useEffect(() => {
@@ -51,28 +49,27 @@ const Signup = () => {
     }, []);
  
     const SignUpComponent = async () => {
-        setLoading(true);
-
         if(email){
             dispatch(emailSendWithOtp(email));
+            toast("OTP send your email")
         }
-        setLoading(false);
     };
 
-    const handleVerifyOTP =()=>{
-        dispatch(validateOtp({email:email,otp:otp}));
-    }
-
     const handelSignUp =()=>{
+        dispatch(validateOtp({email:email,otp:otp}));
+        toast("OTP verfify successfully")
         if(showRes === 'you entered wrong otp'){
             router.push('/')
+            toast("Signup unsuccessfully")
         }
         else{
             router.push('/Home')
+            toast("Signup successfully")
         }
     }
     return (
         <>
+            <ToastContainer />
             <div className="signup_bg_gradient bg-cover h-screen grid place-items-center">
                 <p className="w-52 absolute top-0 left-0 m-2 text-4xl">
                     <img src="/weber_logo-removebg.png" alt="" className="logo" />
@@ -92,12 +89,12 @@ const Signup = () => {
                     <p className="text-start text-gray-400 mb-4">STEP 1 OF 5</p>
                     <div className="mb-6">
 
-                        <PhoneInput
+                        {/* <PhoneInput
                             country={'in'}
                             value={ph}
                             onChange={setPh}
                             inputStyle={{ backgroundColor: '#fff', color: 'black', border: '1px solid #374151' }}
-                        />                        
+                        />                         */}
                         <input type="text" id="base-input" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ENTER YOUR EMAIL" />
 
                         {email_response !== null && (
@@ -126,7 +123,7 @@ const Signup = () => {
                                 <label for="checkbox-3" class="ml-2 text-sm font-medium text-black dark:ttext-black-400">Receive Important Alerts on Whatsapp</label>
                         </div>
 
-                        {email_response !== null && (
+                        {/* {email_response !== null && (
                             <button
                                 type="button"
                                 className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
@@ -134,8 +131,8 @@ const Signup = () => {
                             >
                                 Varify OTP
                             </button> 
-                        )}
-                        
+                        )} */}
+
                         {!email_response && (
                             <>
                                 <button
@@ -143,35 +140,19 @@ const Signup = () => {
                                     className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
                                     onClick={SignUpComponent}
                                 >
-                                    {loading && (
-                                        <CgSpinner size={20} className="mt-1 animate-spin" />
-                                    )}
-                                    CONTINUE
+                                CONTINUE
                                 </button>
                             </>   
-                        )}
-
-                        {/* {!showRes  && email_response == null && (
-                            <button
-                            type="button"
-                            className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
-                            onClick={handleVerifyOTP}
-                        >
-                            Varify OTP
-                        </button> 
-                        )} */}
-
-                        {showRes !== null &&(
+                        )}    
+                        {email_response !== null &&(
                             <button
                                 type="button"
                                 className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
                                 onClick={handelSignUp}
                             >
-                                CONTINUE
+                                CONTINUE TO SIGNUP
                             </button>
                         )}
-                       
-
                     </div>
                 </div>
             </div>
