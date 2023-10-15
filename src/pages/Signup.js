@@ -8,6 +8,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { emailSendWithOtp,validateOtp } from "@/store/actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
+import { CgSpinner } from "react-icons/cg";
+// import toast from "@/components/toast";
 
 
 
@@ -18,6 +20,13 @@ const Signup = () => {
     const [ph, setPh] = useState("");
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+
+
+    const email_response = useSelector((state) => state.auth.email_response)
+    const showRes = useSelector((state) => state.auth.otp_response)
+
+    console.log("email_response--->>>>>>>>",showRes)
 
 
     useEffect(() => {
@@ -40,35 +49,28 @@ const Signup = () => {
           }
         }
     }, []);
-
-    const instance = axios.create({
-        baseURL: 'https://webntertenmaint.com',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded', // Correct the content type
-        },
-    });
-    
+ 
     const SignUpComponent = async () => {
-        dispatch(emailSendWithOtp(email))
-        dispatch(validateOtp({email:email,otp:otp}))
+        setLoading(true);
 
-
-
-        // try {
-        //     const response = await instance.post(`/mysql_conn/send-email-otp.php?email=${email}`, null, {
-        //         method: 'POST',
-        //         withCredentials: true,
-        //     });
-    
-        //     console.log('response ----->', response);
-        //     // Handle the response data here
-        // } catch (error) {
-        //     console.error('Error:', error);
-        //     // Handle errors
-        // }
+        if(email){
+            dispatch(emailSendWithOtp(email));
+        }
+        setLoading(false);
     };
 
+    const handleVerifyOTP =()=>{
+        dispatch(validateOtp({email:email,otp:otp}));
+    }
+
+    const handelSignUp =()=>{
+        if(showRes === 'you entered wrong otp'){
+            router.push('/')
+        }
+        else{
+            router.push('/Home')
+        }
+    }
     return (
         <>
             <div className="signup_bg_gradient bg-cover h-screen grid place-items-center">
@@ -83,7 +85,6 @@ const Signup = () => {
                         <div className="col-span-6 md:col-span-3">
                             <Link href="/">
                                 <p className="text-center text-xl text-black font-semibold hover:border-b-2 hover:border-red-500 pb-1 mb-4 cursor-pointer">Signin</p>
-
                             </Link>
                         </div>
                     </div>
@@ -99,14 +100,16 @@ const Signup = () => {
                         />                        
                         <input type="text" id="base-input" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ENTER YOUR EMAIL" />
 
-                        <input
-                            type="text"
-                            id="base-input"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="ENTER YOUR OTP"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                        />
+                        {email_response !== null && (
+                            <input
+                                type="text"
+                                id="base-input"
+                                className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="ENTER YOUR OTP"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                            />
+                        )}
                         <p className="text-center text-gray-900 mb-4">~OR~</p>
                         <div className="flex flex-col items-center mb-6">
                             <FacebookLoginButton />
@@ -122,13 +125,52 @@ const Signup = () => {
                             <input id="checkbox-3" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600"/>
                                 <label for="checkbox-3" class="ml-2 text-sm font-medium text-black dark:ttext-black-400">Receive Important Alerts on Whatsapp</label>
                         </div>
-                        <button
+
+                        {email_response !== null && (
+                            <button
+                                type="button"
+                                className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
+                                onClick={handleVerifyOTP}
+                            >
+                                Varify OTP
+                            </button> 
+                        )}
+                        
+                        {!email_response && (
+                            <>
+                                <button
+                                    type="button"
+                                    className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
+                                    onClick={SignUpComponent}
+                                >
+                                    {loading && (
+                                        <CgSpinner size={20} className="mt-1 animate-spin" />
+                                    )}
+                                    CONTINUE
+                                </button>
+                            </>   
+                        )}
+
+                        {/* {!showRes  && email_response == null && (
+                            <button
                             type="button"
                             className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
-                            onClick={SignUpComponent}
+                            onClick={handleVerifyOTP}
                         >
-                            CONTINUE
-                        </button>
+                            Varify OTP
+                        </button> 
+                        )} */}
+
+                        {showRes !== null &&(
+                            <button
+                                type="button"
+                                className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
+                                onClick={handelSignUp}
+                            >
+                                CONTINUE
+                            </button>
+                        )}
+                       
 
                     </div>
                 </div>

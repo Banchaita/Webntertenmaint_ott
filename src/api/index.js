@@ -9,6 +9,7 @@ export const apiCall = (config, dispatch) => {
             headers: config.headers,
             data: config.data || {},
             timeout: 70000,
+            
         })
         .then(async (response) => {
             resolve(response);
@@ -16,7 +17,6 @@ export const apiCall = (config, dispatch) => {
         .catch(async (error) => {
             let response = error?.response;
             if (response?.status === 401) {
-                localStorage.removeItem("token")
                 dispatch({
                     type: LOGOUT,
                 });

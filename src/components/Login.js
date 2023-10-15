@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-
 import Logo from "./Logo";
 import Link from 'next/link';
 import FacebookLoginButton from "./FacebookBtn";
@@ -11,9 +10,6 @@ import "react-phone-input-2/lib/style.css";
 import { auth } from "@/firebase.config";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { CgSpinner } from "react-icons/cg";
-
-
-
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 
@@ -70,17 +66,17 @@ const Login = () => {
 
 
   function onOTPVerify() {
-    router.push("/Home")   
-    // window.confirmationResult
-    //   .confirm(otp)
-    //   .then(async (res) => {
-    //     console.log("Login successfully!")
-    //     // toast.success("Login successfully!");
-    //     router.push("/Home"); // Replace "/signup" with the actual path to your signup page
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    // router.push("/Home")   
+    window.confirmationResult
+      .confirm(otp)
+      .then(async (res) => {
+        console.log("Login successfully!")
+        // toast.success("Login successfully!");
+        router.push("/Home"); // Replace "/signup" with the actual path to your signup page
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
 
