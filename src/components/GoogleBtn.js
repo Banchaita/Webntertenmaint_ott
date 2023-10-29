@@ -2,11 +2,18 @@ import { auth } from '@/firebase.config'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import React from 'react'
 import { useRouter } from "next/router";
+import { getMyProfile,setEmailId } from '@/store/actions/auth';
+import { useDispatch, useSelector } from 'react-redux'
+
 
 
 const GoogleBtn = () => {
     const router = useRouter();
     // const auths = getAuth(auth)
+    const dispatch = useDispatch();
+
+
+
     const provider = new GoogleAuthProvider()
 
     const handleGoogleSignUp = async () => {
@@ -24,6 +31,9 @@ const GoogleBtn = () => {
     const handleGoogleLogin = async () => {
         try {
           const result = await signInWithPopup(auth, provider);
+          console.log("result---->>>>>>>>>>>>>>>>>>-",result.user.email)
+          dispatch(getMyProfile(result.user.email))
+          dispatch(setEmailId(result.user.email))
           // Handle successful sign-up, for example, redirect to a new page
           console.log("Google Sign-up Successful!", result.user);
           router.push("/Home")

@@ -1,11 +1,11 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from 'next/link';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import FacebookLoginButton from "@/components/FacebookBtn";
 import GoogleBtn from "@/components/GoogleBtn";
 import { useRouter } from "next/router";
-import { emailSendWithOtp,validateOtp } from "@/store/actions/auth";
+import { emailSendWithOtp, validateOtp, setPhone, setEmailId } from "@/store/actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 import { CgSpinner } from "react-icons/cg";
 import { ToastContainer, toast } from 'react-toastify';
@@ -17,56 +17,97 @@ const Signup = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    const [ph, setPh] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
 
+    const emailInputRef = useRef(null);
+
 
     const email_response = useSelector((state) => state.auth.email_response)
-    const showRes = useSelector((state) => state.auth.otp_response)
 
 
 
     useEffect(() => {
         const input = document.getElementById('phone-input');
         if (input) {
-          const iti = intlTelInput(input, {
-            initialCountry: '',
-            separateDialCode: true,
-            utilsScript: '/img/utils.js',
-          });
-      
-          // Set inline styles for the dropdown
-          const dropdown = input.parentElement.querySelector('.iti__country-list');
-          if (dropdown) {
-            dropdown.style.backgroundColor = 'black'; // Set the desired background color
-            dropdown.style.color = 'white'; // Set the text color for dropdown items
-            dropdown.style.lineHeight = '1.5'; // Adjust line height
-            dropdown.style.padding = '8px'; // Adjust padding
-            dropdown.style.margin = '0'; // Reset margin
-          }
+            const iti = intlTelInput(input, {
+                initialCountry: '',
+                separateDialCode: true,
+                utilsScript: '/img/utils.js',
+            });
+
+            // Set inline styles for the dropdown
+            const dropdown = input.parentElement.querySelector('.iti__country-list');
+            if (dropdown) {
+                dropdown.style.backgroundColor = 'black'; // Set the desired background color
+                dropdown.style.color = 'white'; // Set the text color for dropdown items
+                dropdown.style.lineHeight = '1.5'; // Adjust line height
+                dropdown.style.padding = '8px'; // Adjust padding
+                dropdown.style.margin = '0'; // Reset margin
+            }
         }
     }, []);
- 
+
     const SignUpComponent = async () => {
-        if(email){
+        if (email) {
             dispatch(emailSendWithOtp(email));
             toast("OTP send your email")
         }
     };
 
-    const handelSignUp =()=>{
-        dispatch(validateOtp({email:email,otp:otp}));
-        toast("OTP verfify successfully")
-        if(showRes === 'you entered wrong otp'){
-            router.push('/')
-            toast("Signup unsuccessfully")
+    const handelSignUp = () => {
+        const checkbox = document.getElementById('checkbox-2');
+
+        const emailInputValue = emailInputRef.current?.value;
+
+        if (!phoneNumber || !phoneNumber.trim()) {
+            toast('Please enter your phone number');
+            return;
         }
-        else{
-            router.push('/Home')
-            toast("Signup successfully")
+
+        if (!emailInputValue || !emailInputValue.trim()) {
+            toast('Please enter your email');
+            return;
         }
-    }
+
+        if (!checkbox.checked) {
+            toast('Please agree to above 18 years age');
+            return;
+        }
+
+        // Proceed with dispatching actions and navigating to the next page if all fields are filled and the checkbox is checked
+        let data = {
+            phone_number: phoneNumber
+        };
+        let emailData = {
+            email: emailInputValue
+        };
+        
+        dispatch(setPhone(data));
+        dispatch(setEmailId(emailData))
+        router.push('/SignupStep2');
+    };
+
+
+
+
+    // dispatch(validateOtp({ email: email, otp: otp }));
+    // toast("OTP verfify successfully")
+    // if (showRes === 'you entered wrong otp') {
+    //     router.push('/')
+    //     toast("Signup unsuccessfully")
+    // }
+    // else {
+    //     router.push('/Home')
+    //     toast("Signup successfully")
+    // }
+
+
+
+
+
+
     return (
         <>
             <ToastContainer />
@@ -89,16 +130,17 @@ const Signup = () => {
                     <p className="text-start text-gray-400 mb-4">STEP 1 OF 5</p>
                     <div className="mb-6">
 
-                        {/* <PhoneInput
+                        <PhoneInput
                             country={'in'}
-                            value={ph}
-                            onChange={setPh}
+                            value={phoneNumber}
+                            onChange={setPhoneNumber}
                             inputStyle={{ backgroundColor: '#fff', color: 'black', border: '1px solid #374151' }}
-                        />                         */}
-                        <input type="text" id="base-input" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ENTER YOUR EMAIL" />
+                        />
+                        <input ref={emailInputRef} type="text" id="base-input" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ENTER YOUR EMAIL" />
 
                         {email_response !== null && (
                             <input
+
                                 type="text"
                                 id="base-input"
                                 className="bg-gray-50 border mt-6 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-blue-600 dark:placeholder-black-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -114,45 +156,21 @@ const Signup = () => {
                             <GoogleBtn />
                         </div>
                         <div class="flex items-center mb-4">
-                            <input id="checkbox-2" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600"/>
-                                <label for="checkbox-2" class="ml-2 text-sm font-medium text-black dark:text-black-400">I am above 18 years age</label>
+                            <input id="checkbox-2" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600" />
+                            <label for="checkbox-2" class="ml-2 text-sm font-medium text-black dark:text-black-400">I am above 18 years age</label>
                         </div>
 
                         <div class="flex items-center mb-4">
-                            <input id="checkbox-3" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600"/>
-                                <label for="checkbox-3" class="ml-2 text-sm font-medium text-black dark:ttext-black-400">Receive Important Alerts on Whatsapp</label>
+                            <input id="checkbox-3" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600" />
+                            <label for="checkbox-3" class="ml-2 text-sm font-medium text-black dark:ttext-black-400">Receive Important Alerts on Whatsapp</label>
                         </div>
-
-                        {/* {email_response !== null && (
-                            <button
-                                type="button"
-                                className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
-                                onClick={handleVerifyOTP}
-                            >
-                                Varify OTP
-                            </button> 
-                        )} */}
-
-                        {!email_response && (
-                            <>
-                                <button
-                                    type="button"
-                                    className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
-                                    onClick={SignUpComponent}
-                                >
-                                CONTINUE
-                                </button>
-                            </>   
-                        )}    
-                        {email_response !== null &&(
-                            <button
-                                type="button"
-                                className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
-                                onClick={handelSignUp}
-                            >
-                                CONTINUE TO SIGNUP
-                            </button>
-                        )}
+                        <button
+                            type="button"
+                            className="text-white-700 hover:text-white border bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm py-2.5 mx-auto w-full mb-4 mt-4"
+                            onClick={handelSignUp}
+                        >
+                            CONTINUE
+                        </button>
                     </div>
                 </div>
             </div>

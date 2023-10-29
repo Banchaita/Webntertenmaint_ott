@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { getSession, useSession } from "next-auth/react";
 import Login from "@/components/Login";
@@ -7,18 +8,25 @@ import Hero from "@/components/Hero";
 import Row from "@/components/Row";
 import Link from 'next/link';
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from 'react-redux'
+
 
 
 
 export default function Home(){
   const router = useRouter();
   const { data: session } = useSession();
+  const dispatch = useDispatch();
 
   if (session) {
     // If user is not logged in, redirect to the login page
     router.push("/login"); // Replace "/login" with your login page URL
     return <Login/>;
   }
+
+  const profile_data = useSelector((state) => state.auth.profile_data)
+  console.log("profile_data---",profile_data)
+
   
 
   return (

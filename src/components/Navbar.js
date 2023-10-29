@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { BsBellFill } from "react-icons/bs";
+import { CgProfile } from "react-icons/Cg";
+import { FaFastBackward } from "react-icons/Fa";
 import { BiLogInCircle,BiMenu } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
@@ -18,6 +19,7 @@ const Navbar = () => {
   const isLifeStylePage = router.pathname === "/LifeStyle"; // Check if the current page is the index page
   const isSoundPage = router.pathname === "/SoundTrack"; // Check if the current page is the index page
   const isMusiconPage = router.pathname === "/Musicon"; // Check if the current page is the index page
+  const isProfilepage = router.pathname === "/Profile"; // Check if the current page is the index page
   const [isMobileNavOpen, toggleMobileNav] = useState(false);
 
   // const { data: session } = useSession();
@@ -28,6 +30,13 @@ const Navbar = () => {
     // await signOut({ redirect: false });
     router.push("/");
   };
+
+  const handelGoProfile =()=>{
+    router.push("/Profile");
+  }
+  const handleBacktoHome =()=>{
+    router.push("/Home");
+  }
 
 
   return (
@@ -53,7 +62,10 @@ const Navbar = () => {
                 <li className="headerLink">Best Movies</li>
                 <li className="headerLink">New & Popular</li>
                 <li className="headerLink">TV Shows</li>
-                <li className="headerLink">My List</li>
+                <Link to="/MyList">
+                  <li className="headerLink">My List</li>
+                </Link>
+               
               </ul>
             )}
 
@@ -103,7 +115,9 @@ const Navbar = () => {
                   <li className="headerLink">Best Movies</li>
                   <li className="headerLink">New & Popular</li>
                   <li className="headerLink">TV Shows</li>
+                  <Link href="/MyList">
                   <li className="headerLink">My List</li>
+                </Link>
                 </>
               )}
             </ul>
@@ -151,17 +165,25 @@ const Navbar = () => {
 
           <div className="flex items-center space-x-4 text-sm font-light">
             {/* Show this only on other pages */}
-            <BsBellFill className="h-6 w-6" />
+            {!isProfilepage && (
+                          <CgProfile className="h-6 w-6 cursor-pointer rounded"  onClick={handelGoProfile}/>
+            )}
             {isIndexPage && ( // Show this only on the index page
               <BiLogInCircle
                 className="h-6 w-6 cursor-pointer rounded"
-                onClick={() => signOut()}
+                onClick={handelGoProfile}
               />
             )}
             {!isIndexPage && (
               <BiLogInCircle
                 className="h-6 w-6 cursor-pointer rounded"
                 onClick={() => handleLogout()}
+              />
+            )}
+            {isProfilepage && (
+              <FaFastBackward
+                className="h-6 w-6 cursor-pointer rounded"
+                onClick={() => handleBacktoHome()}
               />
             )}
           </div>

@@ -52,7 +52,6 @@ const Login = () => {
     const appVerifier = window.recaptchaVerifier;
 
     const formatPh = "+" + ph;
-
     signInWithPhoneNumber(auth, formatPh, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
