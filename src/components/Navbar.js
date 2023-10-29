@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CgProfile } from "react-icons/Cg";
-import { FaFastBackward } from "react-icons/Fa";
 import { BiLogInCircle,BiMenu } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
@@ -169,10 +167,13 @@ const Navbar = () => {
                           <CgProfile className="h-6 w-6 cursor-pointer rounded"  onClick={handelGoProfile}/>
             )}
             {isIndexPage && ( // Show this only on the index page
-              <BiLogInCircle
-                className="h-6 w-6 cursor-pointer rounded"
-                onClick={handelGoProfile}
-              />
+              <Link href="/Home">
+              <p>Profile</p>
+            </Link>
+              // <BiLogInCircle
+              //   className="h-6 w-6 cursor-pointer rounded"
+              //   onClick={handelGoProfile}
+              // />
             )}
             {!isIndexPage && (
               <BiLogInCircle
@@ -181,11 +182,11 @@ const Navbar = () => {
               />
             )}
             {isProfilepage && (
-              <FaFastBackward
-                className="h-6 w-6 cursor-pointer rounded"
-                onClick={() => handleBacktoHome()}
-              />
-            )}
+                <Link href="/Home">
+                  <p>Back</p>
+                </Link>
+              )}
+              {/* // <p className="h-6 w-6 cursor-pointer rounded"onClick={() => handleBacktoHome()}/></p> */}
           </div>
         </div>
       </nav>
